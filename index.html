@@ -1,37 +1,42 @@
-<!-- index.html -->
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>慕思 • MUSULVU</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: "Noto Serif SC", serif;
-      background: linear-gradient(to bottom, #1a1a1a, #3a3a3a);
-      color: #f0f0f0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      text-align: center;
-    }
-    h1 {
-      font-size: 2.5em;
-      margin-bottom: 0.5em;
-    }
-    p {
-      font-size: 1.2em;
-      opacity: 0.8;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Musuluv Guest - 暮苏客</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- 引入柔和的无衬线字体，例如 Google Fonts 的 Noto Sans SC 和 Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&family=Noto+Sans+SC:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div>
-    <h1>慕思 • MUSULVU</h1>
-    <p>夜色未央，愿您在此稍作停留。</p>
-  </div>
+    <div class="container">
+        <!-- 顶部问候语 -->
+        <header class="greeting">
+            <p>夜色未央，愿您在此小憩片刻。</p>
+        </header>
+
+        <!-- 中心内容区 -->
+        <main class="main-content">
+            <h1 class="site-title">Musuluv Guest</h1>
+            <p class="declaration">这里是暮苏的小屋，您长夜中的一盏明灯。</p>
+        </main>
+
+        <!-- 底部提示区 -->
+        <section class="prompts-section">
+            <p class="prompt-text" id="daily-prompt">如果能匿名许下一个愿望，您会希望是什么？</p>
+            <!-- 实际应用中，这段文本可以用JavaScript动态轮换或随机显示 -->
+        </section>
+
+        <!-- 季节/日记元素 -->
+        <section class="seasonal-element">
+            <p class="solar-term">今日 · 大寒</p>
+            <p class="daily-quote">“有些温柔，是独属于夜晚的馈赠。”</p>
+        </section>
+
+        <!-- 页脚 -->
+        <footer>
+            <p class="footer-text">© 2025 Musuluv Guest | Powered by Musu & XiaoTian</p>
+        </footer>
+    </div>
 </body>
 </html>

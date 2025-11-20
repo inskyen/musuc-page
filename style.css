@@ -1,0 +1,158 @@
+:root {
+    --midnight-blue-gray: #1a202c; /* 主背景色 */
+    --soft-warm-yellow: #fddb92;   /* 强调色，如文本、边框 */
+    --light-blue-gray: #2d3748;    /* 略亮的背景色，用于区分区域 */
+    --text-color-primary: #e2e8f0; /* 主要文本颜色 */
+    --text-color-secondary: #cbd5e0; /* 次要文本颜色 */
+
+    --font-family-sans-serif: 'Noto Sans SC', 'Montserrat', sans-serif;
+    --letter-spacing-large: 0.15em;
+    --padding-base: 1.5rem;
+    --border-radius-soft: 12px;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--midnight-blue-gray);
+    color: var(--text-color-primary);
+    font-family: var(--font-family-sans-serif);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    letter-spacing: var(--letter-spacing-large);
+    overflow-x: hidden; /* 防止水平滚动 */
+}
+
+.container {
+    max-width: 900px;
+    width: 90%;
+    margin: var(--padding-base) auto;
+    text-align: center;
+    padding: 2.5rem;
+    background-color: var(--light-blue-gray); /* 容器背景略亮 */
+    border-radius: var(--border-radius-soft);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); /* 柔和的暗影 */
+    border: 1px solid rgba(253, 219, 146, 0.2); /* 暖黄边框微光 */
+    position: relative; /* 用于可能的浮动元素 */
+}
+
+/* 顶部问候语 */
+.greeting {
+    margin-bottom: 3rem;
+    font-size: 1.25rem;
+    color: var(--text-color-secondary);
+    opacity: 0.9;
+}
+
+/* 中心内容区 */
+.main-content {
+    margin-bottom: 4rem;
+}
+
+.site-title {
+    font-family: 'Montserrat', sans-serif; /* 英文标题使用更优雅的字体 */
+    font-size: 4.5rem; /* 大标题 */
+    font-weight: 700;
+    color: var(--soft-warm-yellow);
+    margin: 0;
+    line-height: 1.2;
+    letter-spacing: 0.2em; /* 标题字距更大 */
+    text-shadow: 0 0 15px rgba(253, 219, 146, 0.4); /* 柔和的发光效果 */
+}
+
+.declaration {
+    font-size: 1.3rem;
+    color: var(--text-color-primary);
+    margin-top: 1.5rem;
+    letter-spacing: var(--letter-spacing-large);
+}
+
+/* 提示区 */
+.prompts-section {
+    margin-bottom: 4rem;
+    padding: 1.5rem 2rem;
+    background-color: rgba(253, 219, 146, 0.1); /* 提示区背景微黄透明 */
+    border-left: 3px solid var(--soft-warm-yellow);
+    border-radius: var(--border-radius-soft);
+    font-style: italic;
+    color: var(--text-color-secondary);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.prompt-text {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+/* 季节/日记元素 */
+.seasonal-element {
+    margin-bottom: 5rem;
+    color: var(--text-color-secondary);
+    font-size: 1rem;
+    opacity: 0.8;
+}
+
+.solar-term {
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--soft-warm-yellow);
+}
+
+.daily-quote {
+    font-style: italic;
+    font-size: 1.05rem;
+    border-top: 1px dashed rgba(253, 219, 146, 0.3);
+    padding-top: 1rem;
+    margin-top: 1rem;
+}
+
+/* 页脚 */
+footer {
+    margin-top: 4rem;
+    font-size: 0.85rem;
+    color: var(--text-color-secondary);
+    opacity: 0.6;
+    letter-spacing: 0.1em;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .container {
+        padding: 1.5rem;
+        width: 95%;
+    }
+    .site-title {
+        font-size: 3rem;
+        letter-spacing: 0.15em;
+    }
+    .declaration {
+        font-size: 1.1rem;
+    }
+    .greeting, .prompts-section, .seasonal-element {
+        margin-bottom: 2.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        font-size: 1rem;
+    }
+    .site-title {
+        font-size: 2.5rem;
+    }
+    .declaration {
+        font-size: 1rem;
+    }
+    .prompts-section {
+        padding: 1rem;
+    }
+    .greeting p {
+        font-size: 1.1rem;
+    }
+}
