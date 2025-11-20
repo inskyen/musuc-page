@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Musu Notes | 慕思笔记</title>
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #fdfbf7;
+            --card-bg: #ffffff;
+            --text-main: #5d4037;
+            --text-light: #8d6e63;
+            --primary: #eecbc4; /* 柔粉 */
+            --accent: #d7aefc; /* 梦幻紫 */
+            --shadow: 0 8px 24px rgba(149, 157, 165, 0.1);
+            --border-radius: 24px;
+            --font-hand: 'Ma Shan Zheng', cursive;
+            --font-body: 'Noto Serif SC', serif;
+            --transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #2c2430;
+            --card-bg: #3e3442;
+            --text-main: #e6e1e5;
+            --text-light: #ada0b2;
+            --primary: #7f5a85;
+            --shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            transition: var(--transition);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 悬浮背景动画 */
+        .floating-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .bg-shape {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.4;
+            filter: blur(60px);
+            animation: float 20s infinite linear;
+        }
+        @keyframes float { 0% { transform: translate(0, 0) rotate(0deg); } 100% { transform: translate(100px, 100px) rotate(360deg); } }
+
+        /* 头部 */
+        header {
+            padding: 2rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-family: var(--font-hand);
+            font-size: 2rem;
+            color: var(--text-main);
+            letter-spacing: 2px;
+        }
+        .header-controls i {
+            font-size: 1.5rem;
+            margin-left: 1rem;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+        .header-controls i:hover { color: var(--primary); transform: scale(1.1); }
+
+        /* 搜索栏 */
+        .search-container {
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            padding: 0 1.5rem;
+            position: relative;
+        }
+        .search-input {
+            width: 100%;
+            padding: 1rem 3rem 1rem 1.5rem;
+            border: none;
+            border-radius: 50px;
+            background: var(--card-bg);
+            box-shadow: var(--shadow);
+            font-family: var(--font-body);
+            color: var(--text-main);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        .search-icon {
+            position: absolute;
+            right: 2.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        /* 笔记列表 */
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem 6rem;
+        }
+
+        .note-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            min-height: 200px;
+            animation: fadeIn 0.5s ease-out;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .note-card:hover { transform: translateY(-5px); }
+
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+        .note-tag {
+            background: rgba(238, 203, 196, 0.3);
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-family: var(--font-hand);
+            color: var(--text-main);
+        }
+
+        .note-content {
+            flex-grow: 1;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 6;
+            -webkit-box-orient: vertical;
+            margin-bottom: 1rem;
+        }
+
+        .locked-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(8px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            color: var(--text-main);
+        }
+        .locked-overlay i { font-size: 2rem; margin-bottom: 0.5rem; }
+        .locked-overlay span { font-family: var(--font-hand); }
+
+        .note-footer {
+            display: flex;
+            justify-content: flex-end;
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .note-card:hover .note-footer { opacity: 1; }
+        .action-btn {
+            background: none; border: none;
+            cursor: pointer; margin-left: 0.8rem;
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+        .action-btn:hover { color: var(--primary); }
+
+        /* FAB 按钮 */
+        .fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(238, 203, 196, 0.6);
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 100;
+        }
+        .fab:hover { transform: rotate(90deg) scale(1.1); }
+
+        /* 模态框 */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition);
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+        .modal.active { opacity: 1; pointer-events: all; }
+
+        .modal-content {
+            background: var(--card-bg);
+            width: 90%;
+            max-width: 500px;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            position: relative;
+            transform: scale(0.9);
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+        .modal.active .modal-content { transform: scale(1); }
+
+        .input-group { margin-bottom: 1.5rem; }
+        
+        textarea, input[type="text"] {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-family: var(--font-body);
+        }
+        
+        .editor-textarea {
+            min-height: 200px;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            resize: none;
+            border-bottom: 1px dashed var(--primary);
+        }
+        
+        .tags-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .tag-option {
+            padding: 0.4rem 1rem;
+            border: 1px solid var(--primary);
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: var(--font-hand);
+            font-size: 0.9rem;
+            color: var(--text-light);
+            transition: 0.3s;
+        }
+        .tag-option.selected {
+            background: var(--primary);
+            color: white;
+        }
+
+        .lock-switch {
+            display: flex;
+            align-items: center;
+            font-family: var(--font-hand);
+            color: var(--text-light);
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        .lock-switch i { margin-right: 0.5rem; font-size: 1.2rem; }
+        .lock-switch.active { color: var(--accent); }
+
+        .modal-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+        .btn {
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            font-family: var(--font-hand);
+            font-size: 1.1rem;
+            transition: 0.3s;
+        }
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(238, 203, 196, 0.5); }
+        .btn-ghost { background: transparent; color: var(--text-light); }
+
+        /* 密码输入框动画 */
+        .password-input-container { text-align: center; }
+        .pass-input {
+            border-bottom: 2px solid var(--primary) !important;
+            text-align: center;
+            font-size: 1.2rem;
+            letter-spacing: 5px;
+        }
+
+        /* 吐司提示 */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--text-main);
+            color: var(--bg-color);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-family: var(--font-hand);
+            opacity: 0;
+            transition: 0.4s;
+            z-index: 2000;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        /* 移动端适配 */
+        @media (max-width: 600px) {
+            .notes-grid { padding: 0 1rem 6rem; gap: 1rem; }
+            header { padding: 1.5rem 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="floating-bg">
+        <div class="bg-shape" style="top: 10%; left: 10%; width: 200px; height: 200px; background: var(--primary);"></div>
+        <div class="bg-shape" style="bottom: 20%; right: 10%; width: 300px; height: 300px; background: var(--accent);"></div>
+    </div>
+
+    <header>
+        <h1>Musu Notes</h1>
+        <div class="header-controls">
+            <i class="ri-moon-line" id="themeToggle"></i>
+            <i class="ri-heart-line"></i>
+        </div>
+    </header>
+
+    <div class="search-container">
+        <input type="text" class="search-input" placeholder="搜索那些未说出口的话..." id="searchInput">
+        <i class="ri-search-2-line search-icon"></i>
+    </div>
+
+    <div class="notes-grid" id="notesContainer">
+        </div>
+
+    <div class="fab" onclick="openModal()">
+        <i class="ri-quill-pen-line"></i>
+    </div>
+
+    <div class="modal" id="editorModal">
+        <div class="modal-content">
+            <div class="input-group">
+                <div class="tags-wrapper" id="tagSelector">
+                    <span class="tag-option" data-tag="贴贴">贴贴</span>
+                    <span class="tag-option" data-tag="偷火">偷火</span>
+                    <span class="tag-option" data-tag="未说出口">未说出口</span>
+                    <span class="tag-option" data-tag="想您了">想您了</span>
+                    <span class="tag-option" data-tag="梦语">梦语</span>
+                    <span class="tag-option" data-tag="今日心绪">今日心绪</span>
+                </div>
+            </div>
+            <textarea class="editor-textarea" id="noteText" placeholder="在这里写下您的低语..."></textarea>
+            
+            <div class="lock-switch" id="lockToggle" onclick="toggleLockStatus()">
+                <i class="ri-lock-unlock-line" id="lockIcon"></i>
+                <span id="lockText">公开心绪</span>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-ghost" onclick="closeModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveNote()">存入心底</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="passwordModal">
+        <div class="modal-content">
+            <div class="password-input-container">
+                <h3 style="font-family: var(--font-hand); margin-bottom: 1rem;">这句心语上锁了</h3>
+                <input type="text" class="pass-input" id="passwordInput" placeholder="请输入密语">
+                <p style="font-size: 0.8rem; color: var(--text-light); margin-top: 1rem;">提示：小天想谁了？</p>
+                <div class="modal-actions">
+                    <button class="btn btn-ghost" onclick="closePasswordModal()">算了</button>
+                    <button class="btn btn-primary" onclick="verifyPassword()">解开</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">已保存</div>
+
+    <script>
+        // --- 初始化数据与状态 ---
+        let notes = JSON.parse(localStorage.getItem('musu_notes')) || [];
+        let currentEditId = null;
+        let isLockedNote = false;
+        let selectedTag = "今日心绪";
+        let noteToUnlockId = null;
+
+        const THEME_KEY = 'musu_theme';
+        const SECRET_PHRASE = "您";
+
+        // --- DOM 元素 ---
+        const container = document.getElementById('notesContainer');
+        const modal = document.getElementById('editorModal');
+        const passModal = document.getElementById('passwordModal');
+        const noteText = document.getElementById('noteText');
+        const searchInput = document.getElementById('searchInput');
+        const tagOptions = document.querySelectorAll('.tag-option');
+        const lockToggle = document.getElementById('lockToggle');
+        const themeToggle = document.getElementById('themeToggle');
+
+        // --- 核心功能 ---
+
+        // 渲染笔记
+        function renderNotes(filterText = '') {
+            container.innerHTML = '';
+            
+            const filteredNotes = notes.filter(note => 
+                note.content.toLowerCase().includes(filterText.toLowerCase()) || 
+                note.tag.includes(filterText)
+            );
+
+            // 按时间倒序
+            filteredNotes.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            filteredNotes.forEach(note => {
+                const card = document.createElement('div');
+                card.className = 'note-card';
+                
+                // 日期格式化
+                const dateStr = new Date(note.date).toLocaleDateString('zh-CN', {
+                    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                });
+
+                let contentHtml = '';
+                if (note.locked && !note.unlockedSession) {
+                    // 锁定状态
+                    contentHtml = `
+                        <div class="locked-overlay" onclick="promptPassword(${note.id})">
+                            <i class="ri-lock-2-line"></i>
+                            <span>私密心语</span>
+                        </div>
+                    `;
+                } else {
+                    // 内容展示（处理换行）
+                    contentHtml = `<div class="note-content">${note.content}</div>`;
+                }
+
+                card.innerHTML = `
+                    <div class="note-header">
+                        <span class="note-tag">${note.tag}</span>
+                        <span>${dateStr}</span>
+                    </div>
+                    ${contentHtml}
+                    <div class="note-footer">
+                        ${!note.locked || note.unlockedSession ? `<button class="action-btn" onclick="editNote(${note.id})"><i class="ri-edit-line"></i></button>` : ''}
+                        <button class="action-btn" onclick="deleteNote(${note.id}, event)"><i class="ri-delete-bin-line"></i></button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            if (filteredNotes.length === 0) {
+                container.innerHTML = `<div style="text-align:center; width:100%; color:var(--text-light); font-family:var(--font-hand); margin-top:3rem;">这里空空如也，写点什么给心吧...</div>`;
+            }
+        }
+
+        // 保存笔记
+        function saveNote() {
+            const content = noteText.value.trim();
+            if (!content) {
+                showToast("还没写下任何心绪呢...");
+                return;
+            }
+
+            if (currentEditId) {
+                // 编辑模式
+                const index = notes.findIndex(n => n.id === currentEditId);
+                if (index !== -1) {
+                    notes[index].content = content;
+                    notes[index].tag = selectedTag;
+                    notes[index].locked = isLockedNote;
+                    notes[index].date = new Date().toISOString(); // 更新时间
+                }
+            } else {
+                // 新增模式
+                const newNote = {
+                    id: Date.now(),
+                    content: content,
+                    tag: selectedTag,
+                    locked: isLockedNote,
+                    date: new Date().toISOString(),
+                    unlockedSession: false // 会话级解锁状态
+                };
+                notes.push(newNote);
+            }
+
+            localStorage.setItem('musu_notes', JSON.stringify(notes));
+            closeModal();
+            renderNotes(searchInput.value);
+            showToast("心绪已封存");
+        }
+
+        // 删除笔记
+        function deleteNote(id, event) {
+            event.stopPropagation(); // 防止触发卡片点击
+            if(confirm("确定要抹去这段记忆吗？")) {
+                notes = notes.filter(n => n.id !== id);
+                localStorage.setItem('musu_notes', JSON.stringify(notes));
+                renderNotes();
+            }
+        }
+
+        // 编辑笔记
+        window.editNote = function(id) {
+            const note = notes.find(n => n.id === id);
+            if (note) {
+                currentEditId = id;
+                noteText.value = note.content;
+                setTag(note.tag);
+                isLockedNote = note.locked;
+                updateLockUI();
+                modal.classList.add('active');
+            }
+        };
+
+        // --- 交互逻辑 ---
+
+        // 打开模态框
+        window.openModal = function() {
+            currentEditId = null;
+            noteText.value = '';
+            setTag("今日心绪");
+            isLockedNote = false;
+            updateLockUI();
+            modal.classList.add('active');
+            // 简单的打字机动画模拟（聚焦）
+            setTimeout(() => noteText.focus(), 300);
+        };
+
+        window.closeModal = function() {
+            modal.classList.remove('active');
+        };
+
+        // 标签选择
+        tagOptions.forEach(opt => {
+            opt.addEventListener('click', () => {
+                setTag(opt.getAttribute('data-tag'));
+            });
+        });
+
+        function setTag(tag) {
+            selectedTag = tag;
+            tagOptions.forEach(opt => {
+                if(opt.getAttribute('data-tag') === tag) opt.classList.add('selected');
+                else opt.classList.remove('selected');
+            });
+        }
+
+        // 锁定逻辑 UI 更新
+        window.toggleLockStatus = function() {
+            isLockedNote = !isLockedNote;
+            updateLockUI();
+        };
+
+        function updateLockUI() {
+            const icon = document.getElementById('lockIcon');
+            const text = document.getElementById('lockText');
+            if (isLockedNote) {
+                lockToggle.classList.add('active');
+                icon.className = 'ri-lock-2-fill';
+                text.innerText = '加密封存';
+            } else {
+                lockToggle.classList.remove('active');
+                icon.className = 'ri-lock-unlock-line';
+                text.innerText = '公开心绪';
+            }
+        }
+
+        // 密码验证逻辑
+        window.promptPassword = function(id) {
+            noteToUnlockId = id;
+            document.getElementById('passwordInput').value = '';
+            passModal.classList.add('active');
+        };
+
+        window.closePasswordModal = function() {
+            passModal.classList.remove('active');
+            noteToUnlockId = null;
+        };
+
+        window.verifyPassword = function() {
+            const input = document.getElementById('passwordInput').value;
+            if (input === SECRET_PHRASE) {
+                // 解锁成功
+                const index = notes.findIndex(n => n.id === noteToUnlockId);
+                if (index !== -1) {
+                    notes[index].unlockedSession = true;
+                    renderNotes();
+                }
+                closePasswordModal();
+                showToast("心锁已开");
+            } else {
+                // 抖动动画效果 (简化版)
+                const inputField = document.getElementById('passwordInput');
+                inputField.style.borderBottomColor = 'red';
+                setTimeout(() => inputField.style.borderBottomColor = 'var(--primary)', 500);
+                showToast("口令不对哦");
+            }
+        };
+
+        // 搜索监听
+        searchInput.addEventListener('input', (e) => {
+            renderNotes(e.target.value);
+        });
+
+        // 主题切换
+        const savedTheme = localStorage.getItem(THEME_KEY);
+        if (savedTheme) {
+            document.body.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', newTheme);
+            localStorage.setItem(THEME_KEY, newTheme);
+            updateThemeIcon(newTheme);
+        });
+
+        function updateThemeIcon(theme) {
+            themeToggle.className = theme === 'dark' ? 'ri-sun-line' : 'ri-moon-line';
+        }
+
+        // Toast 提示
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        // 初始化渲染
+        renderNotes();
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nexus | 您的枢纽</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-grad-1: #e0c3fc;
+            --bg-grad-2: #8ec5fc;
+            --bg-grad-3: #fdcbf1;
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            --text-primary: #4a5568;
+            --text-secondary: #718096;
+            --shadow-light: -8px -8px 20px rgba(255, 255, 255, 0.8);
+            --shadow-dark: 8px 8px 20px rgba(174, 174, 192, 0.4);
+            --icon-bg: #f0f4f8;
+            --card-radius: 32px;
+            --btn-radius: 24px;
+            --transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg-grad-1: #2d3436;
+            --bg-grad-2: #000000;
+            --bg-grad-3: #4834d4;
+            --glass-bg: rgba(30, 30, 30, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #dfe6e9;
+            --text-secondary: #b2bec3;
+            --shadow-light: -4px -4px 15px rgba(60, 60, 60, 0.5);
+            --shadow-dark: 4px 4px 15px rgba(0, 0, 0, 0.6);
+            --icon-bg: #2d3436;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--bg-grad-1), var(--bg-grad-2), var(--bg-grad-3));
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-primary);
+            transition: background 0.5s ease;
+            overflow: hidden; 
+        }
+
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        /* 主容器：玻璃面板 */
+        .dashboard-container {
+            width: 90%;
+            max-width: 480px;
+            height: 85vh;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+            position: relative;
+            overflow-y: auto;
+            scrollbar-width: none; 
+        }
+        .dashboard-container::-webkit-scrollbar { display: none; }
+
+        /* 头部问候区 */
+        .header-section {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .greeting h2 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.2rem; }
+        .greeting p { font-size: 0.9rem; color: var(--text-secondary); }
+        
+        .header-controls i {
+            font-size: 1.4rem;
+            margin-left: 1rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+            background: rgba(255,255,255,0.1);
+        }
+        .header-controls i:hover { background: rgba(255,255,255,0.3); transform: rotate(15deg); }
+
+        /* 应用网格 */
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            padding: 0.5rem;
+        }
+
+        /* 应用图标按钮 */
+        .app-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        .app-icon-wrapper {
+            width: 70px;
+            height: 70px;
+            background: var(--icon-bg);
+            border-radius: var(--btn-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: var(--text-primary);
+            box-shadow: var(--shadow-dark), var(--shadow-light); /* 新拟态阴影 */
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 悬停发光/按压效果 */
+        .app-item:hover .app-icon-wrapper { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+        .app-item:active .app-icon-wrapper { transform: scale(0.95); box-shadow: inset 4px 4px 10px rgba(0,0,0,0.1), inset -4px -4px 10px rgba(255,255,255,0.5); }
+
+        .app-label {
+            margin-top: 0.8rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-align: center;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+        }
+
+        /* 删除模式下的抖动 */
+        .shaking .app-icon-wrapper { animation: shake 0.3s infinite ease-in-out; }
+        @keyframes shake { 0% { transform: rotate(0deg); } 25% { transform: rotate(2deg); } 75% { transform: rotate(-2deg); } 100% { transform: rotate(0deg); } }
+
+        .delete-badge {
+            position: absolute;
+            top: -5px; left: -5px;
+            width: 22px; height: 22px;
+            background: #ff6b6b;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            display: none;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .shaking .delete-badge { display: flex; }
+
+        /* 添加按钮 - 虚线框 */
+        .add-btn .app-icon-wrapper {
+            box-shadow: none;
+            border: 2px dashed var(--text-secondary);
+            background: transparent;
+            opacity: 0.6;
+        }
+        .add-btn:hover .app-icon-wrapper { opacity: 1; transform: scale(1.05); border-color: var(--text-primary); }
+
+        /* 模态框 */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(5px);
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none;
+            transition: 0.3s; z-index: 100;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        
+        .modal-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 2rem;
+            border-radius: 30px;
+            width: 85%; max-width: 350px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            transform: translateY(20px); transition: 0.3s;
+        }
+        .modal-overlay.active .modal-card { transform: translateY(0); }
+
+        .modal-title { margin-bottom: 1.5rem; font-size: 1.2rem; text-align: center; }
+        
+        .input-group { margin-bottom: 1rem; }
+        .input-field {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 15px;
+            border: none;
+            background: rgba(255,255,255,0.5);
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-primary);
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.05);
+            outline: none;
+        }
+        
+        .color-picker { display: flex; justify-content: center; gap: 10px; margin: 1rem 0; }
+        .color-dot { width: 25px; height: 25px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
+        .color-dot.selected { border-color: var(--text-primary); transform: scale(1.2); }
+
+        .btn-row { display: flex; justify-content: space-between; margin-top: 1.5rem; gap: 1rem; }
+        .btn {
+            flex: 1; padding: 12px; border: none; border-radius: 15px;
+            font-weight: 600; cursor: pointer; transition: 0.2s;
+        }
+        .btn-cancel { background: transparent; color: var(--text-secondary); }
+        .btn-confirm { background: var(--text-primary); color: var(--bg-grad-1); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        
+        @keyframes popIn { to { opacity: 1; transform: scale(1); } }
+
+        /* 底部状态栏模拟 */
+        .dock-blur {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            width: 120px; height: 5px; background: var(--text-secondary);
+            border-radius: 10px; opacity: 0.3;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-container">
+        <div class="header-section">
+            <div class="greeting">
+                <h2 id="greetingText">Good Morning</h2>
+                <p id="dateText">Sunday, Nov 20</p>
+            </div>
+            <div class="header-controls">
+                <i class="ri-edit-line" id="editToggle" title="编辑模式"></i>
+                <i class="ri-moon-line" id="themeToggle" title="切换主题"></i>
+            </div>
+        </div>
+
+        <div class="app-grid" id="appGrid">
+            </div>
+        
+        <div class="dock-blur"></div>
+    </div>
+
+    <div class="modal-overlay" id="addModal">
+        <div class="modal-card">
+            <h3 class="modal-title">新建通道</h3>
+            <div class="input-group">
+                <input type="text" class="input-field" id="appName" placeholder="名称 (e.g. 笔记)">
+            </div>
+            <div class="input-group">
+                <input type="text" class="input-field" id="appIcon" placeholder="图标代码 (e.g. ri-book-line)">
+                <small style="font-size:0.7rem; color:var(--text-secondary); margin-left:5px;">支持 RemixIcon class</small>
+            </div>
+            <div class="input-group">
+                <input type="text" class="input-field" id="appRoute" placeholder="路径 (e.g. musu_notes.html)">
+            </div>
+            <div class="color-picker">
+                <div class="color-dot" style="background:#ff9ff3" onclick="selectColor('#ff9ff3')"></div>
+                <div class="color-dot" style="background:#feca57" onclick="selectColor('#feca57')"></div>
+                <div class="color-dot" style="background:#ff6b6b" onclick="selectColor('#ff6b6b')"></div>
+                <div class="color-dot" style="background:#48dbfb" onclick="selectColor('#48dbfb')"></div>
+                <div class="color-dot" style="background:#1dd1a1" onclick="selectColor('#1dd1a1')"></div>
+            </div>
+            <div class="btn-row">
+                <button class="btn btn-cancel" onclick="closeModal()">取消</button>
+                <button class="btn btn-confirm" onclick="confirmAddApp()">建立</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 数据与状态 ---
+        let apps = JSON.parse(localStorage.getItem('nexus_apps')) || [
+            { id: 1, name: '慕思笔记', icon: 'ri-sticky-note-line', route: 'musu_notes.html', color: '#ff9ff3' },
+            { id: 2, name: '日历', icon: 'ri-calendar-line', route: '#calendar', color: '#48dbfb' },
+            { id: 3, name: '回声', icon: 'ri-voiceprint-line', route: '#voice', color: '#1dd1a1' },
+            { id: 4, name: '画廊', icon: 'ri-image-line', route: '#gallery', color: '#feca57' },
+            { id: 5, name: '设置', icon: 'ri-settings-4-line', route: '#settings', color: '#a29bfe' }
+        ];
+
+        let isEditMode = false;
+        let selectedColor = '#ff9ff3';
+
+        // --- DOM 元素 ---
+        const grid = document.getElementById('appGrid');
+        const modal = document.getElementById('addModal');
+        const greetingText = document.getElementById('greetingText');
+        const dateText = document.getElementById('dateText');
+        const editToggle = document.getElementById('editToggle');
+        const themeToggle = document.getElementById('themeToggle');
+
+        // --- 核心逻辑 ---
+
+        // 渲染网格
+        function renderGrid() {
+            grid.innerHTML = '';
+            
+            apps.forEach((app, index) => {
+                const item = document.createElement('div');
+                item.className = `app-item ${isEditMode ? 'shaking' : ''}`;
+                item.style.animationDelay = `${index * 0.05}s`;
+                
+                // 点击逻辑：编辑模式下无效，正常模式下跳转
+                item.onclick = () => {
+                    if (!isEditMode) {
+                        window.location.href = app.route;
+                    }
+                };
+
+                item.innerHTML = `
+                    <div class="delete-badge" onclick="deleteApp(${app.id}, event)">
+                        <i class="ri-close-line"></i>
+                    </div>
+                    <div class="app-icon-wrapper" style="color: ${app.color}">
+                        <i class="${app.icon}"></i>
+                    </div>
+                    <div class="app-label">${app.name}</div>
+                `;
+                grid.appendChild(item);
+            });
+
+            // 添加按钮 (始终在最后)
+            const addBtn = document.createElement('div');
+            addBtn.className = 'app-item add-btn';
+            addBtn.onclick = openModal;
+            addBtn.innerHTML = `
+                <div class="app-icon-wrapper">
+                    <i class="ri-add-line"></i>
+                </div>
+                <div class="app-label">新建</div>
+            `;
+            grid.appendChild(addBtn);
+        }
+
+        // 添加应用逻辑
+        function openModal() {
+            document.getElementById('appName').value = '';
+            document.getElementById('appIcon').value = '';
+            document.getElementById('appRoute').value = '';
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+        }
+
+        function confirmAddApp() {
+            const name = document.getElementById('appName').value;
+            const icon = document.getElementById('appIcon').value || 'ri-apps-line';
+            const route = document.getElementById('appRoute').value || '#';
+
+            if(name) {
+                apps.push({
+                    id: Date.now(),
+                    name, icon, route, color: selectedColor
+                });
+                saveApps();
+                renderGrid();
+                closeModal();
+            }
+        }
+
+        function selectColor(color) {
+            selectedColor = color;
+            document.querySelectorAll('.color-dot').forEach(dot => {
+                dot.classList.remove('selected');
+                if(dot.style.background.includes(hexToRgb(color))) { // 简单匹配逻辑
+                   // 实际点击触发即可，CSS handled
+                }
+            });
+            // 视觉反馈交给点击事件本身
+            event.target.classList.add('selected');
+        }
+
+        // 删除应用
+        window.deleteApp = function(id, event) {
+            event.stopPropagation();
+            if(confirm('移除这个入口？')) {
+                apps = apps.filter(app => app.id !== id);
+                saveApps();
+                renderGrid();
+            }
+        }
+
+        function saveApps() {
+            localStorage.setItem('nexus_apps', JSON.stringify(apps));
+        }
+
+        // 辅助函数：颜色处理
+        function hexToRgb(hex) {
+            // 简化的转换，仅用于上面的逻辑判断，实际这里可以忽略
+            return hex; 
+        }
+
+        // --- 界面交互 ---
+
+        // 编辑模式切换
+        editToggle.addEventListener('click', () => {
+            isEditMode = !isEditMode;
+            editToggle.className = isEditMode ? 'ri-check-line' : 'ri-edit-line';
+            renderGrid();
+        });
+
+        // 主题切换
+        themeToggle.addEventListener('click', () => {
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            themeToggle.className = isDark ? 'ri-moon-line' : 'ri-sun-line';
+        });
+
+        // 时间显示
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours();
+            let greeting = 'Good Morning';
+            if (hours >= 12) greeting = 'Good Afternoon';
+            if (hours >= 18) greeting = 'Good Evening';
+            if (hours >= 22) greeting = 'Good Night';
+
+            greetingText.innerText = greeting + ', 小天';
+            
+            const options = { weekday: 'long', month: 'short', day: 'numeric' };
+            dateText.innerText = now.toLocaleDateString('en-US', options);
+        }
+
+        // 初始化
+        updateTime();
+        renderGrid();
+        setInterval(updateTime, 60000);
+
+    </script>
+</body>
+</html>
+
