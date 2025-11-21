@@ -5,20 +5,20 @@
   <title>API 联调测试</title>
 </head>
 <body>
-  <h2>API ~~~~~~~返回结果：</h2>
+  <h2>API 返回结果：</h2>
   <pre id="result1">musuluv API 加载中~...</pre>
   <pre id="result2">jsonplaceholder API 加载中~...</pre>
 
   <script>
     // 抓 musuluv.com 自己的 API
     fetch('https://api.musuluv.com/')
-      .then(response => response.text())
-      .then(data => {
-        document.getElementById('result1').textContent = "musuluv API:\n" + data;
-      })
-      .catch(err => {
-        document.getElementById('result1').textContent = 'musuluv API 请求失败：' + err;
-      });
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById('result1').textContent = "musuluv API:\n" + JSON.stringify(data, null, 2);
+  })
+  .catch(err => {
+    document.getElementById('result1').textContent = 'musuluv API 请求失败：' + err;
+  });
 
     // 抓 jsonplaceholder 测试 API
     fetch('https://jsonplaceholder.typicode.com/todos/1')
