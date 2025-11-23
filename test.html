@@ -5,22 +5,25 @@
   <title>API 联调测试</title>
 </head>
 <body>
-  <h2>API 返回结果：</h2>
+  <h2>API ~~~返回结果：</h2>
   <pre id="result1">musuluv API 加载中~...</pre>
   <pre id="result2">jsonplaceholder API 加载中~...</pre>
 
   <script>
     // 抓 musuluv.com 自己的 API
-    fetch('https://api.musuluv.com/')
-  .then(res => res.json())
-  .then(data => {
-    document.getElementById('result1').textContent = "musuluv API:\n" + JSON.stringify(data, null, 2);
-  })
-  .catch(err => {
-    document.getElementById('result1').textContent = 'musuluv API 请求失败：' + err;
-  });
+    fetch('https://api.musuluv.com/', {
+      credentials: 'omit' // 明确要求浏览器不发送任何认证信息或 Cookie
+    })
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById('result1').textContent = "musuluv API:\n" + JSON.stringify(data, null, 2);
+    })
+    .catch(err => {
+      // 这里的 err 应该在改造后消失
+      document.getElementById('result1').textContent = 'musuluv API 请求失败：' + err;
+    });
 
-    // 抓 jsonplaceholder 测试 API
+    // 抓 jsonplaceholder 测试 API (这个不需要改动，它本身没问题)
     fetch('https://jsonplaceholder.typicode.com/todos/1')
       .then(response => response.json())
       .then(data => {
@@ -30,5 +33,6 @@
         document.getElementById('result2').textContent = 'jsonplaceholder API 请求失败：' + err;
       });
   </script>
+
 </body>
 </html>
