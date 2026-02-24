@@ -1,0 +1,26 @@
+[
+  {
+    "id": "maoxuan", 
+    "title": "毛泽东选集",
+    "author": "毛泽东",
+    "cover_color": "#FF4D4D",  // 萌系卡片的专属配色 (红色真理)
+    "tags": ["政治", "哲学", "中国智慧"], // 支持多标签筛选
+    "year": "1951",
+    "difficulty": 5, // 阅读难度星级 (1-5)，可以在页面上显示⭐⭐⭐⭐⭐
+    "intro": "星星之火，可以燎原。这是关于中国革命战争的宏大叙事与哲学思辨...",
+    "download_link": "/assets/pdf/maoxuan.pdf", // 预留下载链接
+    "recommend_reason": "屠龙术。教员的智慧，常读常新。" // 【特色】站长推荐语 (ENTP的私货)
+  },
+  {
+    "id": "bible",
+    "title": "圣经",
+    "author": "神之启示",
+    "cover_color": "#87CEEB", // 天堂蓝
+    "tags": ["宗教", "西方哲学", "信仰"],
+    "year": "N/A",
+    "difficulty": 4,
+    "intro": "起初，神创造天地...",
+    "download_link": "/assets/pdf/bible.pdf",
+    "recommend_reason": "西方文明的底层代码，不信教也要懂其逻辑。"
+  }
+]
