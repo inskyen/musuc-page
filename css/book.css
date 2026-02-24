@@ -1,0 +1,271 @@
+/* =========================================
+   【EDRC 阅读界面 v3.1 (紫袍版)】
+   保留原布局，仅修正配色体系
+   ========================================= */
+
+:root {
+    /* 定义 EDRC 核心色 */
+    --gov-purple: #6a4c93;        /* 主色：政务紫 */
+    --gov-purple-light: #f3f0f7;  /* 辅色：极淡紫背景 */
+    --gov-shadow: rgba(106, 76, 147, 0.25); /* 紫色光晕 */
+    --main: #6a4c93;              /* 适配您原本代码里的 var(--main) */
+}
+
+/* --- 1. 全局背景调整 --- */
+body {
+    /* 背景保持淡雅，稍微带一点点暖灰，更像纸张的衬底 */
+    background: #f5f7fa; 
+    color: #333;
+    /* 字体保持您喜欢的系统优先 */
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+    line-height: 1.8;
+    padding: 0;
+    margin: 0;
+    min-height: 100vh;
+}
+
+a { text-decoration: none; color: inherit; transition: 0.2s; }
+
+/* --- 2. 容器：保留“长白纸”质感 --- */
+.container {
+    max-width: 760px;
+    margin: 0 auto;
+    background: #ffffff;
+    min-height: 100vh;
+    padding: 60px 50px;
+    
+    /* 阴影微调：让纸张质感更实一点 */
+    box-shadow: 0 0 50px rgba(0,0,0,0.03); 
+    box-sizing: border-box;
+}
+
+/* 标题样式 */
+h1 {
+    color: #2c3e50; /* 深邃黑蓝，保持专业 */
+    text-align: center;
+    margin-bottom: 40px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+h2 {
+    /* 【改色】原蓝色 -> 政务紫 */
+    color: var(--gov-purple); 
+    text-align: center;
+    /* 【改色】下划线变成极淡的紫色 */
+    border-bottom: 2px solid var(--gov-purple-light); 
+    padding-bottom: 15px;
+    margin-top: 50px;
+    margin-bottom: 30px;
+    font-weight: normal;
+}
+
+/* --- 列表页卡片：保留原特效，只改光晕颜色 --- */
+.book-card {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    border-radius: 0;
+    box-shadow: none;
+    padding: 25px 15px;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    display: block;
+    position: relative;
+}
+
+.book-card:hover {
+    background: #fff;
+    transform: translateY(-5px) scale(1.01);
+
+    /* 【改色】原蓝色光晕 -> 紫气东来光晕 */
+    box-shadow: 0 15px 40px var(--gov-shadow); 
+
+    border-bottom-color: transparent;
+    border-radius: 8px;
+    z-index: 10;
+}
+
+/* =========================================
+   【修改：标签样式 - 极简无修饰版】
+   ========================================= */
+
+.tag {
+    /* 剥离所有“盒子”属性 */
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+
+    /* 2. 回归“默认黑色” */
+    color: #333; 
+    
+    /* 3. 字体调整 */
+    font-size: 13px;       
+    font-family: monospace;
+    
+    /* 【核心修改】增加字重，让它更醒目 */
+    font-weight: 700;   
+    
+    /* 4. 位置保持不变 */
+    float: right;
+    margin-left: 15px;
+}
+
+/* 5. 禁止悬停变色 */
+.book-card:hover .tag {
+    background: transparent;
+    color: #333; 
+}
+
+
+
+/* --- 3. 详情页 & 阅读页 --- */
+.reader-card {
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    margin-top: 0;
+}
+
+/* 目录项 */
+.chapter-item {
+    padding: 18px 10px;
+    border-bottom: 1px solid #f5f5f5;
+    display: block;
+    color: #666;
+    transition: all 0.2s;
+}
+
+.chapter-item:hover {
+    /* 【改色】悬停变成淡紫底 + 深紫字 */
+    background: var(--gov-purple-light); 
+    color: var(--gov-purple);
+    padding-left: 20px;
+    border-radius: 8px;
+}
+
+/* 导航栏 */
+.nav-bar {
+    display: flex;
+    justify-content: space-between;
+    margin: 60px 0 40px;
+    padding-top: 30px;
+    border-top: 1px solid #eee;
+}
+
+.btn {
+    background: #f5f5f5;
+    color: #666;
+    padding: 12px 30px;
+    border-radius: 30px; /* 保持您喜欢的圆润按钮 */
+    font-size: 0.9rem;
+    transition: all 0.3s;
+}
+
+.btn:hover {
+    /* 【改色】按钮悬停变紫 */
+    background: var(--gov-purple); 
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px var(--gov-shadow);
+}
+
+.disabled { opacity: 0.3; cursor: not-allowed; transform: none !important; }
+
+/* --- 4. 正文阅读体验 --- */
+.content {
+    font-size: 1.2rem;
+    color: #2c3e50;
+    text-align: justify;
+    white-space: pre-wrap;
+    line-height: 1.9;
+    font-weight: 430; /* 保持您调教好的字重 */
+    margin-top: 30px;
+    letter-spacing: 0.02em;
+}
+
+/* --- 移动端适配 --- */
+@media (max-width: 600px) {
+    .container {
+        padding: 30px 20px;
+    }
+    .content {
+        font-size: 1.1rem;
+        line-height: 1.75;
+    }
+    h1 { font-size: 1.8rem; }
+}
+
+/* --- 刚才丢失的样式补全 --- */
+
+/* 1. 返回书架的链接容器 */
+.nav-back {
+    margin-bottom: 20px;
+}
+.nav-back a {
+    color: #999;
+    text-decoration: none; /* 顺手去掉下划线，更干净 */
+}
+
+/* 2. 阅读卡片的主体设置 */
+.reader-card {
+    text-align: center; /* 核心：让标题和作者居中 */
+    /* 如果您之前 reader-card 还有其他样式，请保留 */
+}
+
+/* 3. 书籍简介框 (那个灰色的圆角框) */
+.book-intro {
+    background: #f9f9f9;     /* 浅灰背景 */
+    padding: 20px;           /* 内边距 */
+    border-radius: 15px;     /* 圆角 */
+    text-align: left;        /* 简介文字靠左 */
+    margin: 20px 0;          /* 上下间距 */
+    line-height: 1.6;        /* 增加行高，更易读 */
+}
+
+/* 4. 章节列表容器 */
+.chapter-list {
+    text-align: left;        /* 目录文字靠左 */
+}
+
+
+/* --- 书籍目录页特定样式 --- */
+
+/* 1. 目录头部的容器：负责定位和居中 */
+.catalog-header {
+    position: relative;          /* 为绝对定位的按钮提供坐标系 */
+    display: flex;               /* 让内部元素弹性布局 */
+    justify-content: center;     /* 水平居中 */
+    align-items: center;         /* 垂直居中 */
+    margin-bottom: 15px;
+    height: 30px;                /* 给足够的高度 */
+}
+
+/* 2. 目录标题：去除默认边距 */
+.catalog-header h3 {
+    margin: 0;
+    z-index: 1;                  /* 保证层级，虽无重叠但是个好习惯 */
+}
+
+/* 3. 下载按钮：平时的小透明 */
+.download-btn {
+    position: absolute;          /* 绝对定位 */
+    right: 0;                    /* 钉死在最右边 */
+    font-size: 12px;             /* 小字号 */
+    color: #999;                 /* 灰色 */
+    text-decoration: none;       /* 去掉下划线 */
+    border: 1px solid #eee;      /* 极淡边框 */
+    padding: 2px 8px;            /* 小内边距 */
+    border-radius: 4px;          /* 小圆角 */
+    opacity: 0.6;                /* 半透明 */
+    transition: all 0.3s ease;   /* 丝滑过渡动画 */
+}
+
+/* 4. 下载按钮：鼠标悬停时的激活态 */
+.download-btn:hover {
+    opacity: 1;                  /* 不透明 */
+    color: #4a3570;              /* 主题紫 */
+    border-color: #4a3570;       /* 边框变紫 */
+    box-shadow: 0 2px 5px rgba(74, 53, 112, 0.1); /* 微微浮起 */
+}
